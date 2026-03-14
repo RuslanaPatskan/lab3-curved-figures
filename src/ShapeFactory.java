@@ -32,6 +32,19 @@ public class ShapeFactory {
             case 5:
                 shape = new Rectangle2D.Double(-width / 2.0, -height / 2.0, width, height);
                 break;
+            case 6:
+                // Hexagon
+                GeneralPath hex = new GeneralPath();
+                for (int i = 0; i < 6; i++) {
+                    double a = Math.toRadians(60 * i - 30);
+                    double px = width / 2.0 * Math.cos(a);
+                    double py = height / 2.0 * Math.sin(a);
+                    if (i == 0) hex.moveTo(px, py);
+                    else        hex.lineTo(px, py);
+                }
+                hex.closePath();
+                shape = hex;
+                break;
             case 7:
                 GeneralPath path = new GeneralPath();
                 double tmp_height = Math.sqrt(2.0) / 2.0 * height;
