@@ -10,7 +10,7 @@ public class TitlesFrame extends JFrame {
     private void initUI() {
         setTitle("Кривые фигуры");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        add(new TitlesPanel(78));
+        add(new TitlesPanel(64));
         setSize(350, 350);
         setLocationRelativeTo(null);
     }
