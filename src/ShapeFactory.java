@@ -9,13 +9,35 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
-public class ShapeFactory {
+/**
+ * Фабрика геометричних фігур і їх властивостей.
+ * Параметр shape_type кодує фігуру та властивості:
+ * <ul>
+ *   <li>десятки (shape_type / 10): тип фігури (1=зірка-3, 3=зірка-5,
+ *       5=прямокутник, 6=шестикутник, 7=трикутник, 9=дуга)</li>
+ *   <li>одиниці (shape_type % 10): властивість межі/заливки
+ *       (1=stroke 3px, 4=stroke 7px, 7=градієнт, 8=червоний)</li>
+ * </ul>
+ */
 
+public class ShapeFactory {
+    /** Геометрична форма фігури. */
     public Shape       shape;
+    /** Стиль обведення (товщина лінії). */
     public BasicStroke stroke;
+    /** Заливка фігури (колір або градієнт). */
     public Paint       paint;
+    /** Ширина фігури у пікселях. */
     public int         width;
+    /** Висота фігури у пікселях. */
     public int         height;
+
+    /**
+     * Створює фігуру та встановлює її властивості за кодом shape_type.
+     *
+     * @param shape_type код фігури та властивостей
+     * @throws Error якщо переданий код не підтримується
+     */
 
     public ShapeFactory(int shape_type) {
         width  = 25;
@@ -86,6 +108,17 @@ public class ShapeFactory {
         }
     }
 
+/**
+     * Створює зіркоподібну фігуру із заданою кількістю променів.
+     * Вершини чергуються між зовнішнім (rOuter) та внутрішнім (rInner) радіусом.
+     *
+     * @param arms   кількість променів зірки
+     * @param center центральна точка фігури
+     * @param rOuter радіус зовнішніх вершин
+     * @param rInner радіус внутрішніх вершин
+     * @return об'єкт Shape із зіркою
+     */
+    
     private static Shape createStar(int arms, Point center, double rOuter, double rInner) {
         double angle = Math.PI / arms;
         GeneralPath path = new GeneralPath();
