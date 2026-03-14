@@ -9,6 +9,12 @@ import java.awt.event.ActionListener;
 import java.awt.Dimension;
 import java.awt.Insets;
 
+**
+ * Панель відображення анімованих фігур.
+ * Використовує javax.swing.Timer для покадрової анімації:
+ * на кожному кадрі фігури обертаються та перемальовуються.
+ */
+
 public class TitlesPanel extends JPanel implements ActionListener {
 
     private Graphics2D g2d;
@@ -17,6 +23,12 @@ public class TitlesPanel extends JPanel implements ActionListener {
     private int start_angle;
     private int shape;
 
+/**
+     * Створює панель з вказаним типом фігури та запускає анімацію.
+     *
+     * @param _shape код фігури та властивостей (tens=фігура, units=властивість)
+     */
+    
     public TitlesPanel(int _shape) {
         start_angle = 0;
         is_done = true;
@@ -33,6 +45,14 @@ public class TitlesPanel extends JPanel implements ActionListener {
         }
     }
 
+/**
+     * Малює сітку фігур на панелі з урахуванням поточного кута обертання.
+     * Використовує AffineTransform для повороту кожної фігури навколо
+     * власного центру. Фігури розміщуються рядками та стовпцями.
+     *
+     * @param g графічний контекст для малювання
+     */
+    
     private void doDrawing(Graphics g) {
         is_done = false;
         g2d = (Graphics2D) g;
