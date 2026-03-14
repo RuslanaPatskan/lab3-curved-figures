@@ -9,33 +9,47 @@ import java.awt.event.ActionListener;
 import java.awt.Dimension;
 import java.awt.Insets;
 
-**
+/**
  * Панель відображення анімованих фігур.
  * Використовує javax.swing.Timer для покадрової анімації:
  * на кожному кадрі фігури обертаються та перемальовуються.
  */
-
 public class TitlesPanel extends JPanel implements ActionListener {
 
-    private Graphics2D g2d;
-    private Timer animation;
-    private boolean is_done;
-    private int start_angle;
-    private int shape;
+    private Graphics2D   g2d;
+    private Timer        animation;
+    private boolean      is_done;
+    private int          start_angle;
+    private ShapeType    shapeType;
+    private ShapeStyle   shapeStyle;
 
-/**
-     * Створює панель з вказаним типом фігури та запускає анімацію.
+    /**
+     * Основний конструктор — використовує enum для чіткого задання
+     * типу фігури та стилю відображення.
      *
-     * @param _shape код фігури та властивостей (tens=фігура, units=властивість)
+     * @param type  тип фігури (наприклад ShapeType.HEXAGON)
+     * @param style стиль відображення (наприклад ShapeStyle.STROKE_7PX)
      */
-    
-    public TitlesPanel(int _shape) {
+    public TitlesPanel(ShapeType type, ShapeStyle style) {
+        this.shapeType  = type;
+        this.shapeStyle = style;
         start_angle = 0;
-        is_done = true;
-        shape = _shape;
-        animation = new Timer(50, this);
+        is_done     = true;
+        animation   = new Timer(50, this);
         animation.setInitialDelay(50);
         animation.start();
+    }
+
+    /**
+     * Конструктор зворотної сумісності — приймає старий числовий код.
+     *
+     * @param shape_type числовий код (наприклад 64 = шестикутник + 7px)
+     * @deprecated Використовуйте {@link #TitlesPanel(ShapeType, ShapeStyle)}
+     */
+    @Deprecated
+    public TitlesPanel(int shape_type) {
+        this(ShapeType.fromCode(shape_type / 10),
+             ShapeStyle.fromCode(shape_type % 10));
     }
 
     @Override
@@ -45,45 +59,37 @@ public class TitlesPanel extends JPanel implements ActionListener {
         }
     }
 
-/**
+    /**
      * Малює сітку фігур на панелі з урахуванням поточного кута обертання.
      * Використовує AffineTransform для повороту кожної фігури навколо
      * власного центру. Фігури розміщуються рядками та стовпцями.
      *
      * @param g графічний контекст для малювання
      */
-    
     private void doDrawing(Graphics g) {
         is_done = false;
-        g2d = (Graphics2D) g;
+        g2d     = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                              RenderingHints.VALUE_ANTIALIAS_ON);
 
-        Dimension size = getSize();
-        Insets insets = getInsets();
+        Dimension size   = getSize();
+        Insets    insets = getInsets();
         int w = size.width  - insets.left - insets.right;
         int h = size.height - insets.top  - insets.bottom;
 
-        ShapeFactory sf = new ShapeFactory(shape);
+        ShapeFactory sf = new ShapeFactory(shapeType, shapeStyle);
         g2d.setStroke(sf.stroke);
         g2d.setPaint(sf.paint);
 
         double dr = start_angle;
         start_angle += 1;
-        if (start_angle > 360) {
-            start_angle = 0;
-        }
+        if (start_angle > 360) start_angle = 0;
 
         double step = 90.0 / ((double) w / (sf.width * 1.5));
 
         for (int j = sf.height; j < h; j = (int)(j + sf.height * 1.5)) {
             for (int i = sf.width; i < w; i = (int)(i + sf.width * 1.5)) {
-                double angle = dr;
-                if (angle > 360.0) {
-                    angle = 0;
-                } else {
-                    angle = dr + step;
-                }
+                double angle = (dr > 360.0) ? 0 : dr + step;
                 dr = angle;
 
                 AffineTransform transform = new AffineTransform();
